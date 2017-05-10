@@ -120,7 +120,7 @@ func DoRequest(httpClient *http.Client, header map[string]string, method, host, 
 	start := time.Now()
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		fmt.Println("redirect?")
+		fmt.Println(err)
 		//this is a bit weird. When redirection is prevented, a url.Error is retuned. This creates an issue to distinguish
 		//between an invalid URL that was provided and and redirection error.
 		rr, ok := err.(*url.Error)
@@ -142,7 +142,7 @@ func DoRequest(httpClient *http.Client, header map[string]string, method, host, 
 	if err != nil {
 		fmt.Println("An error occured reading body", err)
 	}
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		duration = time.Since(start)
 		respSize = len(body) + int(util.EstimateHttpHeadersSize(resp.Header))
 	} else if resp.StatusCode == http.StatusMovedPermanently || resp.StatusCode == http.StatusTemporaryRedirect {
